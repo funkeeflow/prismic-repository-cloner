@@ -105,7 +105,12 @@ async function uploadCustomTypes(customTypes: any[]) {
 async function uploadAndSaveDocuments(sourceDocumentsPath: string, destinationDocumentsPath: string) {
 
   const { documentUploadMapPath, imageUploadMapPath } = getFileStructure();
-  const languages = await fetchLanguages();
+
+  if (!process.env.SOURCE_REPOSITORY_NAME) {
+    throw new Error("SOURCE_REPOSITORY_NAME must be set in .env file");
+  }
+
+  const languages = await fetchLanguages(process.env.SOURCE_REPOSITORY_NAME);
 
   const documentUploadMap = fs.existsSync(documentUploadMapPath) ? JSON.parse(fs.readFileSync(documentUploadMapPath, "utf8")) : {};
   const imageUploadMap = fs.existsSync(imageUploadMapPath) ? JSON.parse(fs.readFileSync(imageUploadMapPath, "utf8")) : {};
@@ -165,7 +170,11 @@ async function uploadAndSaveDocuments(sourceDocumentsPath: string, destinationDo
 
 async function migrateDocuments(documents: any[]) {
 
-  const languages = await fetchLanguages();
+  if (!process.env.SOURCE_REPOSITORY_NAME) {
+    throw new Error("SOURCE_REPOSITORY_NAME must be set in .env file");
+  }
+
+  const languages = await fetchLanguages(process.env.SOURCE_REPOSITORY_NAME);
 
   const { destinationDocumentsPath, documentUploadMapPath, documentMigrationMapPath } = getFileStructure();
 

@@ -23,12 +23,9 @@ export async function wait(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function fetchMasterRef(reproName: string) {
-  if(!process.env.SOURCE_ACCESS_TOKEN) {
-    throw new Error("SOURCE_ACCESS_TOKEN must be set in .env file");
-  }
+export async function fetchMasterRef(repositoryName: string) {
 
-  const prismicEndpoint = getPrismicEndpoint(reproName);
+  const prismicEndpoint = getPrismicEndpoint(repositoryName);
 
   const response = await fetch(`${prismicEndpoint}`);
 
@@ -43,8 +40,9 @@ export async function fetchMasterRef(reproName: string) {
   return masterRef;
 }
 
-export async function fetchLanguages() {
-  const prismicEndpoint = getPrismicEndpoint(process.env.SOURCE_REPOSITORY_NAME);
+export async function fetchLanguages(repositoryName: string) {
+
+  const prismicEndpoint = getPrismicEndpoint(repositoryName);
   const response = await fetch(`${prismicEndpoint}`);
 
   if (!response.ok) {

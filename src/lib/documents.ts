@@ -3,12 +3,8 @@ import env from "dotenv";
 import { getMigrationEndpoint, getPrismicEndpoint } from './utils';
 env.config();
 
-if(!process.env.SOURCE_REPOSITORY_NAME || !process.env.DESTINATION_REPOSITORY_NAME) {
-  throw new Error("SOURCE_REPOSITORY_NAME and DESTINATION_REPOSITORY_NAME must be set in .env file");
-}
-
 export async function fetchPrismicDocuments({ ref = "master", languages, query = {} }) {
-  const documents = [];
+  const documents = [] as any[];
 
   for (const language of languages) {
 
@@ -19,6 +15,10 @@ export async function fetchPrismicDocuments({ ref = "master", languages, query =
       lang: language,
       pageSize: 100
     });
+
+    if (!process.env.SOURCE_REPOSITORY_NAME) {
+      throw new Error("SOURCE_REPOSITORY_NAME must be set in .env file");
+    }
 
     const prismicEndpoint = getPrismicEndpoint(process.env.SOURCE_REPOSITORY_NAME);
     const response = await fetch(`${prismicEndpoint}/documents/search?${queryString}`);
@@ -48,6 +48,11 @@ export async function fetchPrismicDocuments({ ref = "master", languages, query =
 
 export async function uploadDocument(document) {
   const migrationEndpoint = getMigrationEndpoint();
+
+  if (!process.env.DESTINATION_WRITE_API_TOKEN || !process.env.DESTINATION_REPOSITORY_NAME || !process.env.MIGRATION_DEMO_TOKEN) {
+    throw new Error("DESTINATION_WRITE_API_TOKEN, DESTINATION_REPOSITORY_NAME and MIGRATION_DEMO_TOKEN must be set in .env file");
+  }
+
   const response = await fetch(`${migrationEndpoint}`, {
     headers: {
       'Authorization': 'Bearer ' + process.env.DESTINATION_WRITE_API_TOKEN,
@@ -67,6 +72,11 @@ export async function uploadDocument(document) {
 
 export async function updateDocument(document) {
   const migrationEndpoint = getMigrationEndpoint();
+
+  if (!process.env.DESTINATION_WRITE_API_TOKEN || !process.env.DESTINATION_REPOSITORY_NAME || !process.env.MIGRATION_DEMO_TOKEN) {
+    throw new Error("DESTINATION_WRITE_API_TOKEN, DESTINATION_REPOSITORY_NAME and MIGRATION_DEMO_TOKEN must be set in .env file");
+  }
+
   const response = await fetch(`${migrationEndpoint}/${document.id}`, {
     headers: {
       'Authorization': 'Bearer ' + process.env.DESTINATION_WRITE_API_TOKEN,

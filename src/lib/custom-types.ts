@@ -3,18 +3,18 @@ import env from "dotenv";
 import { getCustomTypesEndpoint } from './utils';
 env.config();
 
-if (!process.env.SOURCE_REPOSITORY_NAME || !process.env.DESTINATION_REPOSITORY_NAME) {
-  throw new Error("SOURCE_REPOSITORY_NAME and DESTINATION_REPOSITORY_NAME must be set in .env file");
-}
-
 export async function fetchCustomTypes({ ref = "master", query = {} }) {
-
   const queryString = qs.stringify({
     ref,
     ...query
   });
 
   const customTypesEndpoint = getCustomTypesEndpoint();
+
+  if (!process.env.SOURCE_WRITE_API_TOKEN || !process.env.SOURCE_REPOSITORY_NAME) {
+    throw new Error("SOURCE_WRITE_API_TOKEN, SOURCE_REPOSITORY_NAME must be set in .env file");
+  }
+
   const response = await fetch(`${customTypesEndpoint}`, {
     headers: {
       'Authorization': 'Bearer ' + process.env.SOURCE_WRITE_API_TOKEN,
@@ -31,6 +31,11 @@ export async function fetchCustomTypes({ ref = "master", query = {} }) {
 
 export async function checkIfCustomTypeAlreadyUploaded(customTypeId: string) {
   const customTypesEndpoint = getCustomTypesEndpoint();
+
+  if (!process.env.DESTINATION_WRITE_API_TOKEN || !process.env.DESTINATION_REPOSITORY_NAME) {
+    throw new Error("DESTINATION_WRITE_API_TOKEN, DESTINATION_REPOSITORY_NAME must be set in .env file");
+  }
+
   const response = await fetch(`${customTypesEndpoint}/${customTypeId}`, {
     headers: {
       'Authorization': 'Bearer ' + process.env.DESTINATION_WRITE_API_TOKEN,
@@ -49,6 +54,11 @@ export async function checkIfCustomTypeAlreadyUploaded(customTypeId: string) {
 
 export async function uploadCustomType(customType) {
   const customTypesEndpoint = getCustomTypesEndpoint();
+
+  if (!process.env.DESTINATION_WRITE_API_TOKEN || !process.env.DESTINATION_REPOSITORY_NAME) {
+    throw new Error("DESTINATION_WRITE_API_TOKEN, DESTINATION_REPOSITORY_NAME must be set in .env file");
+  }
+
   const response = await fetch(`${customTypesEndpoint}/insert`, {
     headers: {
       'Authorization': 'Bearer ' + process.env.DESTINATION_WRITE_API_TOKEN,

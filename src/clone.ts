@@ -70,8 +70,12 @@ export async function cloneSourceRepo() {
 
   const { customTypesPath, sourceDocumentsPath, assetsPath } = getFileStructure();
 
+  if (!process.env.SOURCE_REPOSITORY_NAME) {
+    throw new Error("SOURCE_REPOSITORY_NAME must be set in .env file");
+  }
+
   const masterRefSource = await fetchMasterRef(process.env.SOURCE_REPOSITORY_NAME);
-  const languages = await fetchLanguages();
+  const languages = await fetchLanguages(process.env.SOURCE_REPOSITORY_NAME);
 
   console.log("Fetching assets...");
   const assets = await fetchAssets({ ref: masterRefSource.ref });

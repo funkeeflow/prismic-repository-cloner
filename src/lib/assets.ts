@@ -1,15 +1,11 @@
 import * as fs from "fs";
+import env from "dotenv";
 import path from 'path';
-import { Readable } from 'stream';
 import qs from 'qs';
 import { Axios } from "axios";
-import env from "dotenv";
-import { getAssetsEndpoint, getPrismicEndpoint } from './utils';
-env.config();
+import { getAssetsEndpoint } from './utils';
 
-if (!process.env.SOURCE_REPOSITORY_NAME || !process.env.DESTINATION_REPOSITORY_NAME) {
-  throw new Error("SOURCE_REPOSITORY_NAME and DESTINATION_REPOSITORY_NAME must be set in .env file");
-}
+env.config();
 
 export async function fetchAssets({ ref = "master", query = {} }) {
 
@@ -20,6 +16,11 @@ export async function fetchAssets({ ref = "master", query = {} }) {
   });
 
   const assetsEndpoint = getAssetsEndpoint();
+
+  if (!process.env.SOURCE_WRITE_API_TOKEN || !process.env.SOURCE_REPOSITORY_NAME) {
+    throw new Error("SOURCE_WRITE_API_TOKEN and SOURCE_REPOSITORY_NAME must be set in .env file");
+  }
+
   const response = await fetch(`${assetsEndpoint}?${queryString}`, {
     headers: {
       'Authorization': 'Bearer ' + process.env.SOURCE_WRITE_API_TOKEN,
@@ -31,11 +32,11 @@ export async function fetchAssets({ ref = "master", query = {} }) {
     throw new Error(`fetchAssets(): Failed to fetch prismic repo: ${response.statusText}. Query: ${queryString}`);
   }
 
-  const { total, items } = await response.json();
+  const { items } = await response.json();
   return items;
 }
 
-export async function downloadAsset(asset, outputDir) {
+export async function downloadAsset(asset: any, outputDir: string) {
   const response = await fetch(asset.url);
 
   if (!response.ok) {
@@ -61,7 +62,7 @@ export async function downloadAsset(asset, outputDir) {
   console.log(`Downloaded ${asset.filename} to ${filePath}`);
 }
 
-export async function uploadAsset(filePath: string, asset) {
+export async function uploadAsset(filePath: string, asset: any) {
   try {
     const stats = fs.statSync(filePath);
     const fileSizeInBytes = stats.size;
@@ -100,9 +101,12 @@ export async function uploadAsset(filePath: string, asset) {
   }
 }
 
-
-export async function checkIfImageAlreadyUploaded(id) {
+export async function checkIfImageAlreadyUploaded(id: string) {
   const assetsEndpoint = getAssetsEndpoint();
+
+  if (!process.env.DESTINATION_WRITE_API_TOKEN || !process.env.DESTINATION_REPOSITORY_NAME) {
+    throw new Error("DESTINATION_WRITE_API_TOKEN and DESTINATION_REPOSITORY_NAME must be set in .env file");
+  }
 
   const response = await fetch(`${assetsEndpoint}?id=${id}&limit=1`, {
     headers: {

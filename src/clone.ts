@@ -77,19 +77,19 @@ export async function cloneSourceRepo() {
   const masterRefSource = await fetchMasterRef(process.env.SOURCE_REPOSITORY_NAME);
   const languages = await fetchLanguages(process.env.SOURCE_REPOSITORY_NAME);
 
-  console.log("Fetching assets...");
+  console.log("🐠 Fetching assets...");
   const assets = await fetchAssets({ ref: masterRefSource.ref });
   for (const asset of assets) {
     await savePrismicAsset(asset, assetsPath);
   }
 
-  console.log("Fetching custom types...");
+  console.log("🦀 Fetching custom types...");
   const types = await fetchCustomTypes({ ref: masterRefSource.ref });
   for (const type of types) {
     savePrismicCustomType(type, customTypesPath);
   }
 
-  console.log("Fetching documents...");
+  console.log("🐩 Fetching documents...");
   const documents = await fetchPrismicDocuments({ ref: masterRefSource.ref, languages });
   for (const document of documents) {
     savePrismicDocument(document, sourceDocumentsPath);

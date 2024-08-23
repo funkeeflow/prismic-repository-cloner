@@ -1,6 +1,6 @@
 {
   "name": "primisc-repository-cloner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Node script to clone a Prismic repository with use of the Migration API",
   "main": "index.js",
   "scripts": {

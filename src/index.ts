@@ -3,7 +3,7 @@ import { createDestinationRepo } from "./create";
 
 async function main() {
   await cloneSourceRepo();
-  // await createDestinationRepo();
+  await createDestinationRepo();
 }
 
 main();

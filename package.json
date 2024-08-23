@@ -9,6 +9,8 @@
   "author": "Florian Berg",
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^22.5.0",
+    "@types/qs": "^6.9.15",
     "axios": "^1.7.4",
     "dotenv": "^16.4.5",
     "qs": "^6.13.0",

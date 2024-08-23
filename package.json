@@ -1,0 +1,17 @@
+{
+  "name": "primisc-repository-cloner",
+  "version": "0.0.1",
+  "description": "A Node script to clone a Prismic repository with use of the Migration API",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "tsx src/index.ts"
+  },
+  "author": "Florian Berg",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.4",
+    "dotenv": "^16.4.5",
+    "qs": "^6.13.0",
+    "tsx": "^4.17.0"
+  }
+}
